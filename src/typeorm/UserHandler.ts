@@ -17,12 +17,12 @@ export class UserHandler{
     async login(data: LoginData): Promise<ResultObject<User>>{
         const user = await this.userRepo.findOneBy([{email: data.login}, {phone: data.login}]);
         if(user == null)
-            return {code: ResultCode.INVALID_LOGIN_OR_PASSWORD}
+            return {code: ResultCode.WRONG_LOGIN_OR_PASSWORD}
 
         if((await this.passwordHandler.verifyPassword(user.u_id, data.password)).code == ResultCode.OK)
             return {code: ResultCode.OK, result: user}
         else
-            return {code: ResultCode.INVALID_LOGIN_OR_PASSWORD}
+            return {code: ResultCode.WRONG_LOGIN_OR_PASSWORD}
     }
 
     async registration(user: RegData): Promise<ResultObject<string>>{

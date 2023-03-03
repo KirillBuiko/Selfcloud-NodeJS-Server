@@ -15,7 +15,6 @@ socket_server.use((socket, next) => {
 
 });
 
-// TODO:
 socket_server.on('connection', (socket) => {
     console.log("COOKIE:" + socket.request.headers.cookie);
     socket.on('disconnect', reason => disconnectHandler(socket));

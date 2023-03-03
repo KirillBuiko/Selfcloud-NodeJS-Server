@@ -29,7 +29,7 @@ async function accountTest() {
         return;
     }*/
 
-    let logRes = await userHandler.login('1231231213', 'PASSWORD12313');
+    let logRes = await userHandler.login({login: '1231231213', password: 'PASSWORD12313'});
     console.log(logRes);
     //console.log(passHandler.verifyPasswordWithHash(hash, password).code);
 }

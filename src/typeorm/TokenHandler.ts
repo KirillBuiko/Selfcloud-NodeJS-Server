@@ -13,20 +13,11 @@ export class TokenHandler{
         this.tokenRepo = AppDataSource.getRepository(Token);
     }
 
-    async checkAccessToken(token: AccessData): Promise<ResultObject<string>>{
+    async checkToken(token: AccessData | RefreshData, checkRefresh = false): Promise<ResultObject<string>>{
         const tokenFind = await this.tokenRepo.findOneBy(token)
         if(tokenFind == null)
             return {code: ResultCode.TOKEN_INVALID};
-        if (tokenFind.deadAt < (new Date()).getTime())
-            return {code: ResultCode.TOKEN_EXPIRED, result: tokenFind.u_id};
-        return {code: ResultCode.OK, result: tokenFind.u_id};
-    }
-
-    async checkRefreshToken(token: RefreshData): Promise<ResultObject<string>>{
-        const tokenFind = await this.tokenRepo.findOneBy(token)
-        if(tokenFind == null)
-            return {code: ResultCode.TOKEN_INVALID};
-        if(token.refresh != tokenFind.refresh)
+        if(checkRefresh && (!("refresh" in token) || (token.refresh != tokenFind.refresh)))
             return {code: ResultCode.TOKEN_INVALID};
         if (tokenFind.deadAt < (new Date()).getTime())
             return {code: ResultCode.TOKEN_EXPIRED, result: tokenFind.u_id};
@@ -59,7 +50,7 @@ export class TokenHandler{
     }
 
     async refreshToken(token: RefreshData): Promise<ResultObject<RefreshData>>{
-        const res = await this.checkRefreshToken(token);
+        const res = await this.checkToken(token, true);
         if(res.code == ResultCode.OK || res.code == ResultCode.TOKEN_EXPIRED){
             const newToken = await this.createToken(res.result, token.fingerprint);
             return {code: ResultCode.OK, result: newToken};
