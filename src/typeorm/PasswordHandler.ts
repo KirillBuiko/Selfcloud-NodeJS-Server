@@ -1,6 +1,6 @@
 import {Repository} from "typeorm";
 import {PassHash} from "@/typeorm/entities/PassHash";
-import {ResultObject} from "@/Objects";
+import {ResultObject} from "@/types/RequestTypes";
 import {AppDataSource} from "@/typeorm/index";
 import ResultCode from "@/ResultCode";
 import crypto from "crypto";

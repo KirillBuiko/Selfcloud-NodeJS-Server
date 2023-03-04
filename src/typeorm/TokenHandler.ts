@@ -4,7 +4,7 @@ import {Configs} from "@/ConfigFile";
 import {AppDataSource} from "@/typeorm/index";
 import {Repository} from "typeorm";
 import ResultCode from "@/ResultCode";
-import {AccessData, RefreshData, ResultObject} from "@/Objects";
+import {AccessData, RefreshData, ResultObject} from "@/types/RequestTypes";
 
 export class TokenHandler{
     tokenRepo: Repository<Token>;

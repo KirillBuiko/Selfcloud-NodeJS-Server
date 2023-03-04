@@ -1,5 +1,5 @@
 import {Repository} from "typeorm";
-import {LoginData, RegData, ResultObject} from "@/Objects";
+import {LoginData, RegData, ResultObject} from "@/types/RequestTypes";
 import {AppDataSource} from "@/typeorm/index";
 import ResultCode from "@/ResultCode";
 import {User} from "@/typeorm/entities/User";

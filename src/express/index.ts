@@ -3,11 +3,12 @@ import cookieParser from 'cookie-parser'
 import cors from 'cors';
 import {cookieMigrationMiddle} from "@/express/middlewares/cookieMigrationMiddle"
 import {accountRequestRouter} from "@/express/routers/accountRequestRouter";
+import {Configs} from "@/ConfigFile";
 
 const ex = express()
 
 ex.use(cors({
-    origin: 'http://localhost:8300',
+    origin: Configs.ORIGIN,
     optionsSuccessStatus: 200,
     credentials: true
 }))

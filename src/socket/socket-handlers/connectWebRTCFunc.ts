@@ -1,5 +1,9 @@
-import {Socket} from "socket.io";
+import {SCSocket} from "@/types/SocketTypes";
 
-export const connectWebRTCFunc = (io, socket: Socket) => {
+function connectWebRTCHandler(){
     // TODO: make connect webrtc to other device
+}
+
+export const connectWebRTCFunc = (io, socket: SCSocket) => {
+    socket.on("connect-webrtc", connectWebRTCHandler);
 }

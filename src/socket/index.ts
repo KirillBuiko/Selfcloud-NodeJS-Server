@@ -1,23 +1,26 @@
 import http from "http";
-import {Server} from 'socket.io'
+import {Server, Socket} from 'socket.io'
 import {handshakeMiddle} from "@/socket/middlewares/handshakeMiddle";
-import {WebRTCRouter} from "@/socket/routers/WebRTCRouter";
-import {getInfoRouter} from "@/socket/routers/getInfoRouter";
-import {statusChangeRouter} from "@/socket/routers/statusChangeRouter";
+import {SCSocket, SCSocketServer} from "@/types/SocketTypes";
+import * as handler from "@/socket/socket-handlers"
 
 const socket_http = http.createServer();
 
-const io = new Server(socket_http, {
+const io: SCSocketServer = new Server(socket_http, {
     cors: {
         origin: "*"
     }
 });
 
 io.use(handshakeMiddle);
-io.on('connection', (socket) => {
-    statusChangeRouter(io, socket);
-    getInfoRouter(io, socket);
-    WebRTCRouter(io, socket);
+io.on('connection', (socket: SCSocket) => {
+    handler.connectToRoomFunc(io, socket);
+    handler.onDisconnectFunc(io, socket);
+
+    handler.getDeviceListFunc(io, socket);
+
+    handler.connectWebRTCFunc(io, socket);
+    handler.sendWebRTCCandidateFunc(io, socket);
 });
 
 export default socket_http;

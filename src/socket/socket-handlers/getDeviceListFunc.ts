@@ -1,5 +1,9 @@
-import {Socket} from "socket.io";
+import {SCSocket} from "@/types/SocketTypes";
 
-export const getDeviceListFunc = (io, socket: Socket) => {
+function getDeviceHandler(){
     // TODO: make get device list
+}
+
+export const getDeviceListFunc = (io, socket: SCSocket) => {
+    socket.on("get-devices", getDeviceHandler);
 }

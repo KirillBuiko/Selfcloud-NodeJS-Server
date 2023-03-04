@@ -1,6 +1,11 @@
-import {Socket} from "socket.io";
+import {DisconnectReason} from "socket.io";
+import {SCSocket} from "@/types/SocketTypes";
 
-export const onDisconnectFunc = (io, socket: Socket) => {
+function disconnectHandler(reason: DisconnectReason){
+    console.log(reason);
     // TODO: make disconnect handler
-    socket.on('disconnect', (reason) => {})
+}
+
+export const onDisconnectFunc = (io, socket: SCSocket) => {
+    socket.on("disconnect", disconnectHandler)
 }

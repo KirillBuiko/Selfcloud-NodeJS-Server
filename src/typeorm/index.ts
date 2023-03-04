@@ -6,7 +6,7 @@ import {PassHash} from "@/typeorm/entities/PassHash";
 
 export const AppDataSource = new DataSource({
     type :"sqlite",
-    database: "shoppingDB",
+    database: "tempDB.db",
     synchronize: true,
     logging: true,
     entities: [User, Token, PassHash],

@@ -1,9 +1,10 @@
 export const Configs = {
     EXPRESS_PORT: 35000,
     SOCKET_PORT: 40000,
-    HOST: 'http://127.0.0.1',
-    REQUEST_PREFIX: '/request',
-    REFRESH_PATH: '/refresh',
+    ORIGIN: "http://localhost:8300",
+    HOST: "http://127.0.0.1",
+    REQUEST_PREFIX: "/request",
+    REFRESH_PATH: "/refresh",
 
     ACCESS_TOKEN_LENGTH: 50,
     REFRESH_TOKEN_LENGTH: 300,
