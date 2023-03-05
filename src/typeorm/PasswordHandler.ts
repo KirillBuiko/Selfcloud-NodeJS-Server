@@ -1,6 +1,6 @@
 import {Repository} from "typeorm";
 import {PassHash} from "@/typeorm/entities/PassHash";
-import {ResultObject} from "@/types/RequestTypes";
+import {ResponseObject} from "@/types/RequestTypes";
 import {AppDataSource} from "@/typeorm/index";
 import ResultCode from "@/ResultCode";
 import crypto from "crypto";
@@ -34,7 +34,7 @@ export class PasswordHandler{
         return Buffer.from(JSON.stringify(hashObject)).toString('base64');
     }
 
-    async saveHash(u_id: string, hash: string): Promise<ResultObject<string>>{
+    async saveHash(u_id: string, hash: string): Promise<ResponseObject<string>>{
         await this.passRepo.save({u_id: u_id, hash: hash})
         return {code: ResultCode.OK};
     }
@@ -49,14 +49,14 @@ export class PasswordHandler{
         return Buffer.from(JSON.stringify(res)).toString('base64');
     }
 
-    async verifyPassword(u_id: string, password: string): Promise<ResultObject<string>>{
+    async verifyPassword(u_id: string, password: string): Promise<ResponseObject<string>>{
         const res = await this.passRepo.findOneBy({u_id: u_id});
         if(res == null)
             return {code: ResultCode.FAIL}
         return this.verifyPasswordWithHash(res.hash, password)
     }
 
-    verifyPasswordWithHash(hash: string, password: string): ResultObject<string>{
+    verifyPasswordWithHash(hash: string, password: string): ResponseObject<string>{
         const passwordHash = this.rehashPassword(password, hash);
         if(hash == passwordHash)
             return {code: ResultCode.OK}

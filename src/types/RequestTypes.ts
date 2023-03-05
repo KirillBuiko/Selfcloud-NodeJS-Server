@@ -1,8 +1,8 @@
 import ResultCode from "@/ResultCode";
 
-export interface ResultObject<K>{
-    code: ResultCode,
-    result?: K
+export interface ResponseObject<K>{
+    code: ResultCode;
+    result?: K;
 }
 
 export interface AccessData{
@@ -12,6 +12,11 @@ export interface AccessData{
 
 export interface RefreshData extends AccessData{
     refresh: string
+}
+
+export interface TokenInfo{
+    uID: string,
+    deadTime: number
 }
 
 export interface LoginData{

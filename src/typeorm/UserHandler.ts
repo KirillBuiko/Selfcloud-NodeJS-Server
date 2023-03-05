@@ -1,5 +1,5 @@
 import {Repository} from "typeorm";
-import {LoginData, RegData, ResultObject} from "@/types/RequestTypes";
+import {LoginData, RegData, ResponseObject} from "@/types/RequestTypes";
 import {AppDataSource} from "@/typeorm/index";
 import ResultCode from "@/ResultCode";
 import {User} from "@/typeorm/entities/User";
@@ -14,7 +14,7 @@ export class UserHandler{
         this.passwordHandler = new PasswordHandler();
     }
 
-    async login(data: LoginData): Promise<ResultObject<User>>{
+    async login(data: LoginData): Promise<ResponseObject<User>>{
         const user = await this.userRepo.findOneBy([{email: data.login}, {phone: data.login}]);
         if(user == null)
             return {code: ResultCode.WRONG_LOGIN_OR_PASSWORD}
@@ -25,7 +25,7 @@ export class UserHandler{
             return {code: ResultCode.WRONG_LOGIN_OR_PASSWORD}
     }
 
-    async registration(user: RegData): Promise<ResultObject<string>>{
+    async registration(user: RegData): Promise<ResponseObject<string>>{
         // TODO: user fields validation, convert phone to format, password validation
         if((await this.userRepo.findOneBy([{phone: user.phone}, {email: user.email}])) != null)
             return {code: ResultCode.EMAIL_OR_PHONE_IS_BUSY};
