@@ -1,24 +1,23 @@
 import {IUserDBController} from "@/action-handlers/interfaces/IUserDBController";
 import {RegData} from "@/types/RequestTypes";
 
-export class UserDBController implements IUserDBController{
+export class TestUserDBController implements IUserDBController{
     async getPasswordHash(uID: string): Promise<string | null> {
-        return Promise.resolve(undefined);
+        return "";
     }
 
     async getUserIDByEmailOrPhone(email: string, phone: string): Promise<string | null> {
-        return Promise.resolve(undefined);
+        return "";
     }
 
     async getUserIDByLogin(login: string): Promise<string | null> {
-        return Promise.resolve(undefined);
+        return "";
     }
 
     async saveNewUser(regData: RegData): Promise<string | null> {
-        return Promise.resolve(undefined);
+        return "";
     }
 
     async savePasswordHash(uID: string, hash: string): Promise<void> {
-        return Promise.resolve(undefined);
     }
 }

@@ -1,26 +1,25 @@
 import {AccessData, LoginData, RefreshData, RegData, ResponseObject} from "@/types/RequestTypes";
 import ResultCode from "@/ResultCode";
 import {TokenActionHandler} from "@/action-handlers/TokenActionHandler";
-import {ITokenDBController} from "@/action-handlers/interfaces/ITokenDBController";
-import {IUserDBController} from "@/action-handlers/interfaces/IUserDBController";
 import {PasswordActionHandler} from "@/action-handlers/PasswordActionHandler";
+import {IDBController} from "@/action-handlers/interfaces/IDBController";
 
-export class accountActionHandler{
-    tokenActionHandler: TokenActionHandler;
-    passwordActionHandler: PasswordActionHandler;
+export class AccountActionHandlers{
+    private tokenActionHandler: TokenActionHandler;
+    private passwordActionHandler: PasswordActionHandler;
 
-    constructor(tokenDBController: ITokenDBController, private userDBController: IUserDBController) {
-        this.tokenActionHandler = new TokenActionHandler(tokenDBController);
-        this.passwordActionHandler = new PasswordActionHandler(userDBController);
+    constructor(private dbController: IDBController) {
+        this.tokenActionHandler = new TokenActionHandler(dbController);
+        this.passwordActionHandler = new PasswordActionHandler(dbController);
     }
 
-    async loginPassword(loginData: LoginData, fingerprint?: any): Promise<ResponseObject<RefreshData>>{
-        const uID = await this.userDBController.getUserIDByLogin(loginData.login);
+    async loginPassword(loginData: LoginData): Promise<ResponseObject<RefreshData>>{
+        const uID = await this.dbController.user.getUserIDByLogin(loginData.login);
         if((uID == null) ||
             ((await this.passwordActionHandler.verifyPassword(uID, loginData.password)).code != ResultCode.OK))
             return {code: ResultCode.WRONG_LOGIN_OR_PASSWORD}
 
-        const token = await this.tokenActionHandler.createToken(uID, fingerprint)
+        const token = await this.tokenActionHandler.createToken(uID, loginData.fingerprint)
         return({code: ResultCode.OK, result: token})
     }
 
@@ -36,10 +35,10 @@ export class accountActionHandler{
 
     async registration(regData: RegData): Promise<ResponseObject<undefined>>{
         // TODO: user fields validation, convert phone to format, password validation
-        if(await this.userDBController.getUserIDByEmailOrPhone(regData.email, regData.phone) != null)
+        if(await this.dbController.user.getUserIDByEmailOrPhone(regData.email, regData.phone) != null)
             return {code: ResultCode.EMAIL_OR_PHONE_IS_BUSY}
 
-        const uID = await this.userDBController.saveNewUser(regData);
+        const uID = await this.dbController.user.saveNewUser(regData);
         await this.passwordActionHandler.hashAndSave(uID, regData.password);
         return {code: ResultCode.OK}
     }

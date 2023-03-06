@@ -1,10 +1,7 @@
-import {Repository} from "typeorm";
-import {PassHash} from "@/typeorm/entities/PassHash";
 import {ResponseObject} from "@/types/RequestTypes";
-import {AppDataSource} from "@/typeorm/index";
 import ResultCode from "@/ResultCode";
 import crypto from "crypto";
-import {IUserDBController} from "@/action-handlers/interfaces/IUserDBController";
+import {IDBController} from "@/action-handlers/interfaces/IDBController";
 
 interface PasswordHashObject{
     digest: string,
@@ -15,10 +12,10 @@ interface PasswordHashObject{
 }
 
 export class PasswordActionHandler {
-    constructor(private userDBController: IUserDBController) {}
+    constructor(private dbController: IDBController) {}
 
     async verifyPassword(uID: string, password: string): Promise<ResponseObject<string>>{
-        const hash = await this.userDBController.getPasswordHash(uID);
+        const hash = await this.dbController.user.getPasswordHash(uID);
         if(hash == null)
             return {code: ResultCode.FAIL}
         return this.verifyPasswordWithHash(hash, password)
@@ -48,7 +45,7 @@ export class PasswordActionHandler {
     }
 
     private async saveHash(uID: string, hash: string): Promise<ResponseObject<undefined>>{
-        await this.userDBController.savePasswordHash(uID, hash)
+        await this.dbController.user.savePasswordHash(uID, hash)
         return {code: ResultCode.OK};
     }
 

@@ -1,16 +1,14 @@
 import {AccessData, RefreshData, ResponseObject} from "@/types/RequestTypes";
 import ResultCode from "@/ResultCode";
-import {Token} from "@/typeorm/entities/Token";
 import crypto from "crypto";
 import {Configs} from "@/ConfigFile";
-import {AppDataSource} from "@/typeorm";
-import {ITokenDBController} from "@/action-handlers/interfaces/ITokenDBController";
+import {IDBController} from "@/action-handlers/interfaces/IDBController";
 
 export class TokenActionHandler{
-    constructor(private tokenDBController: ITokenDBController) {}
+    constructor(private dbController: IDBController) {}
 
     async checkToken(token: AccessData | RefreshData): Promise<ResponseObject<string>>{
-        const info = await this.tokenDBController.getTokenInfo(token)
+        const info = await this.dbController.token.getTokenInfo(token)
         if(info == null)
             return {code: ResultCode.TOKEN_INVALID};
         if (info.deadTime < (new Date()).getTime())
@@ -25,7 +23,7 @@ export class TokenActionHandler{
             refresh: this.createRefreshToken(),
         };
 
-        await this.tokenDBController.saveToken(uID, token);
+        await this.dbController.token.saveToken(uID, token);
         return token;
     }
 
@@ -51,6 +49,6 @@ export class TokenActionHandler{
     }
 
     async clearToken(token: AccessData): Promise<void>{
-        await this.tokenDBController.deleteToken(token);
+        await this.dbController.token.deleteToken(token);
     }
 }
