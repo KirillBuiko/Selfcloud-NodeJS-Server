@@ -3,15 +3,15 @@ import {RegData} from "@/types/RequestTypes";
 
 export class TestUserDBController implements IUserDBController{
     async getPasswordHash(uID: string): Promise<string | null> {
-        return "";
+        return null;
     }
 
     async getUserIDByEmailOrPhone(email: string, phone: string): Promise<string | null> {
-        return "";
+        return null;
     }
 
     async getUserIDByLogin(login: string): Promise<string | null> {
-        return "";
+        return null;
     }
 
     async saveNewUser(regData: RegData): Promise<string | null> {

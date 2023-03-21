@@ -32,3 +32,10 @@ export interface RegData{
     name?: string,
     surname?: string,
 }
+
+export interface VirtualDiskData{
+    vdID: string,
+    fingerprint: string,
+    isOnline: boolean,
+    socketID: string
+}

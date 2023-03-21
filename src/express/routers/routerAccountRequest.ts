@@ -1,33 +1,39 @@
 import express, {Router} from "express";
 import {Configs} from "@/ConfigFile";
-import * as obj from "@/types/RequestTypes";
 import {ExpressAccountRequestHandlers} from "@/express/router-handlers/ExpressAccountRequestHandlers";
-import {ExpressGeneralHandlers} from "@/express/router-handlers/ExpressGeneralHandlers";
 import {IDBController} from "@/action-handlers/interfaces/IDBController";
 
 export function routerAccountRequest(dbController: IDBController): Router{
-    const accountRequestRouter = express.Router();
-    const expressGeneralHandlers = new ExpressGeneralHandlers();
-    const expressAccountRequestHandlers = new ExpressAccountRequestHandlers(dbController);
+    const accReqRouter = express.Router();
+    const exAccReqHandlers = new ExpressAccountRequestHandlers(dbController);
 
-    accountRequestRouter.post(Configs.REQUEST_PREFIX + '/login_password', [
-        expressGeneralHandlers.typeCheckNext<obj.LoginData>(),
-        expressAccountRequestHandlers.loginPassword])
+    accReqRouter.post(Configs.REQUEST_PREFIX + '/login_password',[
+        // checkSchema({
+        //     login: {
+        //         exists: true,
+        //         errorMessage: ResultCode.DATA_IS_INCOMPLETE
+        //     }
+        // } /*as {[key in keyof obj.LoginData]: ValidatorsSchema}*/),
+        // (req, res,next)=>{
+        // const errors = validationResult(req);
+        //     if (!errors.isEmpty()) {
+        //         return res.json({ code: errors.array()[0].msg});
+        //     }
+        //     next();
+        //     },
+        exAccReqHandlers.loginPassword.bind(exAccReqHandlers)])
 
-    accountRequestRouter.post(Configs.REQUEST_PREFIX + '/login_token', [
-        expressGeneralHandlers.typeCheckNext<obj.AccessData>(),
-        expressAccountRequestHandlers.accessTokenCheck])
+    accReqRouter.post(Configs.REQUEST_PREFIX + '/login_token', [
+        exAccReqHandlers.accessTokenCheck.bind(exAccReqHandlers)])
 
-    accountRequestRouter.post(Configs.REQUEST_PREFIX + '/registration', [
-        expressGeneralHandlers.typeCheckNext<obj.RegData>(),
-        expressAccountRequestHandlers.registration])
+    accReqRouter.post(Configs.REQUEST_PREFIX + '/registration', [
+        exAccReqHandlers.registration.bind(exAccReqHandlers)])
 
-    accountRequestRouter.post(Configs.REQUEST_PREFIX + Configs.REFRESH_PATH, [
-        expressGeneralHandlers.typeCheckNext<obj.RefreshData>(),
-        expressAccountRequestHandlers.refreshToken])
+    accReqRouter.post(Configs.REQUEST_PREFIX + Configs.REFRESH_PATH, [
+        exAccReqHandlers.refreshToken.bind(exAccReqHandlers)])
 
-    accountRequestRouter.post(Configs.REQUEST_PREFIX + '/logout',
-        expressAccountRequestHandlers.logout)
+    accReqRouter.post(Configs.REQUEST_PREFIX + '/logout',
+        exAccReqHandlers.logout.bind(exAccReqHandlers))
 
-    return accountRequestRouter;
+    return accReqRouter;
 }

@@ -1,16 +1,16 @@
 import {AccessData, LoginData, RefreshData, RegData, ResponseObject} from "@/types/RequestTypes";
 import ResultCode from "@/ResultCode";
-import {TokenActionHandler} from "@/action-handlers/TokenActionHandler";
-import {PasswordActionHandler} from "@/action-handlers/PasswordActionHandler";
+import {TokenActions} from "@/action-handlers/TokenActions";
+import {PasswordActions} from "@/action-handlers/PasswordActions";
 import {IDBController} from "@/action-handlers/interfaces/IDBController";
 
-export class AccountActionHandlers{
-    private tokenActionHandler: TokenActionHandler;
-    private passwordActionHandler: PasswordActionHandler;
+export class AccountActions {
+    private tokenActionHandler: TokenActions;
+    private passwordActionHandler: PasswordActions;
 
     constructor(private dbController: IDBController) {
-        this.tokenActionHandler = new TokenActionHandler(dbController);
-        this.passwordActionHandler = new PasswordActionHandler(dbController);
+        this.tokenActionHandler = new TokenActions(dbController);
+        this.passwordActionHandler = new PasswordActions(dbController);
     }
 
     async loginPassword(loginData: LoginData): Promise<ResponseObject<RefreshData>>{

@@ -4,7 +4,7 @@ import crypto from "crypto";
 import {Configs} from "@/ConfigFile";
 import {IDBController} from "@/action-handlers/interfaces/IDBController";
 
-export class TokenActionHandler{
+export class TokenActions {
     constructor(private dbController: IDBController) {}
 
     async checkToken(token: AccessData | RefreshData): Promise<ResponseObject<string>>{

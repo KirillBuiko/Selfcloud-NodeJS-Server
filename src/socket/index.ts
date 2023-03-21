@@ -1,26 +1,31 @@
 import http from "http";
-import {Server, Socket} from 'socket.io'
+import {Server} from 'socket.io'
 import {handshakeMiddle} from "@/socket/middlewares/handshakeMiddle";
 import {SCSocket, SCSocketServer} from "@/types/SocketTypes";
-import * as handler from "@/socket/socket-handlers"
+import {SocketHandlers} from "@/socket/SocketHandlers";
+import {IDBController} from "@/action-handlers/interfaces/IDBController";
 
-const socket_http = http.createServer();
+export default function getSocket(dbController: IDBController){
+    const socket_http = http.createServer();
+    const io: SCSocketServer = new Server(socket_http, {
+        cors: {
+            origin: "*"
+        }
+    });
+    const handlers = new SocketHandlers(io, dbController);
 
-const io: SCSocketServer = new Server(socket_http, {
-    cors: {
-        origin: "*"
-    }
-});
+    io.use(handshakeMiddle);
+    io.on('connection', (socket: SCSocket) => {
+        handlers.onConnect(socket);
+        socket.on("disconnect", handlers.onDisconnect)
 
-io.use(handshakeMiddle);
-io.on('connection', (socket: SCSocket) => {
-    handler.connectToRoomFunc(io, socket);
-    handler.onDisconnectFunc(io, socket);
+        socket.on("get-virtual-disks", handlers.getVirtualDisks);
+        // TODO: create provide-virtual-disks, create-virtual-disk-remove-virtual-disk handlers
 
-    handler.getDeviceListFunc(io, socket);
+        socket.on("connect-webrtc", handlers.connectWebRTC);
+        socket.on("connect-webrtc-answer", handlers.connectWebRTCAnswer);
+        socket.on("send-webrtc-candidate", handlers.sendWebRTCCandidate);
+    });
 
-    handler.connectWebRTCFunc(io, socket);
-    handler.sendWebRTCCandidateFunc(io, socket);
-});
-
-export default socket_http;
+    return socket_http;
+}

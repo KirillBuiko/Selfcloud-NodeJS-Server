@@ -11,7 +11,7 @@ interface PasswordHashObject{
     iter: number
 }
 
-export class PasswordActionHandler {
+export class PasswordActions {
     constructor(private dbController: IDBController) {}
 
     async verifyPassword(uID: string, password: string): Promise<ResponseObject<string>>{

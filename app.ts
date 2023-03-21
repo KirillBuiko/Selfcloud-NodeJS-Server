@@ -23,7 +23,7 @@ async function assertDatabaseConnectionOk() {
     express(testDBController).listen(Configs.EXPRESS_PORT, () => {
         console.log(`Express server started on ${Configs.HOST}:${Configs.EXPRESS_PORT}.`);
     });
-    socket.listen(Configs.SOCKET_PORT, () => {
+    socket(testDBController).listen(Configs.SOCKET_PORT, () => {
         console.log(`Socket server started on ${Configs.HOST}:${Configs.SOCKET_PORT}.`);
     });
 })()
