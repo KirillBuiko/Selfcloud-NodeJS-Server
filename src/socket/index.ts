@@ -20,7 +20,10 @@ export default function getSocket(dbController: IDBController){
         socket.on("disconnect", handlers.onDisconnect)
 
         socket.on("get-virtual-disks", handlers.getVirtualDisks);
-        // TODO: create provide-virtual-disks, create-virtual-disk-remove-virtual-disk handlers
+        socket.on("provide-virtual-disks", handlers.provideVirtualDisks);
+        socket.on("create-virtual-disk", handlers.createVirtualDisk);
+        socket.on("remove-virtual-disk", handlers.removeVirtualDisk);
+
 
         socket.on("connect-webrtc", handlers.connectWebRTC);
         socket.on("connect-webrtc-answer", handlers.connectWebRTCAnswer);

@@ -5,25 +5,32 @@ import * as crypto from "crypto";
 export class VirtualDiskActions{
     constructor(private dbController: IDBController) {}
 
-    addVirtualDisk(uID: string, fingerprint: string, socketID: string): void{
+    async createVirtualDisk(uID: string, fingerprint: string, socketID: string): Promise<VirtualDiskData>{
         const vdID = crypto.randomUUID();
-        this.dbController.virtualDisks.addVirtualDisk(uID, {
+        const vd: VirtualDiskData = {
             vdID,
             fingerprint,
-            isOnline: true,
+            isOnline: false,
             socketID: socketID
-        })
+        }
+        await this.dbController.virtualDisks.addVirtualDisk(uID, vd)
+        return vd;
     }
 
-    deviceDisconnect(uID: string, fingerprint: string){
-        this.dbController.virtualDisks.disconnectDevice(uID, fingerprint);
+    async removeVirtualDisk(uID: string, vdID: string): Promise<void>{
+        await this.dbController.virtualDisks.removeVirtualDisk(uID, vdID)
     }
 
-    connectVirtualDisk(uID: string, vd: VirtualDiskData){
-        this.dbController.virtualDisks.connectVirtualDisk(uID, vd);
+    async deviceDisconnect(uID: string, fingerprint: string): Promise<void>{
+        // disconnecting all VD from this socket
+        await this.dbController.virtualDisks.disconnectDevice(uID, fingerprint);
+    }
+
+    async connectVirtualDisks(uID: string, vdIDs: string[]): Promise<void>{
+        await this.dbController.virtualDisks.connectVirtualDisks(uID, vdIDs);
     }
 
     async getVirtualDisks(uID: string): Promise<VirtualDiskData[]>{
-        return await this.dbController.virtualDisks.getVirtualDisks(uID);
+        return this.dbController.virtualDisks.getVirtualDisks(uID);
     }
 }
