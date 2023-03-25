@@ -24,30 +24,30 @@ export class SocketHandlers{
         socket.broadcast.to(roomID).emit("device-disconnected", socket.data.fingerprint);
     }
 
-    connectWebRTC(targetID: string, offer: string){
+    connectWebRTC(targetID: string, fingerprint: string, offer: string){
         // TODO: test
         const socket = this as unknown as SCSocket;
         const roomID = socket.data.uID;
         if(this.io.sockets.adapter.rooms.get(roomID).has(targetID)){
-            this.io.sockets.sockets.get(targetID).emit("webrtc-offer-received", socket.id, offer);
+            this.io.sockets.sockets.get(targetID).emit("webrtc-offer-received", socket.id, fingerprint, offer);
         }
     }
 
-    connectWebRTCAnswer(targetID: string, answer: string){
+    connectWebRTCAnswer(targetID: string, fingerprint: string, answer: string){
         // TODO: test
         const socket = this as unknown as SCSocket;
         const roomID = socket.data.uID;
         if(this.io.sockets.adapter.rooms.get(roomID).has(targetID)){
-            this.io.sockets.sockets.get(targetID).emit("webrtc-answer-received", socket.id, answer);
+            this.io.sockets.sockets.get(targetID).emit("webrtc-answer-received", socket.id, fingerprint, answer);
         }
     }
 
-    sendWebRTCCandidate(targetID: string, candidate: string){
+    sendWebRTCCandidate(targetID: string, fingerprint: string, candidate: string){
         // TODO: test
         const socket = this as unknown as SCSocket;
         const roomID = socket.data.uID;
         if(this.io.sockets.adapter.rooms.get(roomID).has(targetID)){
-            this.io.sockets.sockets.get(targetID).emit("webrtc-candidate-received", socket.id, candidate);
+            this.io.sockets.sockets.get(targetID).emit("webrtc-candidate-received", socket.id, fingerprint, candidate);
         }
     }
 
@@ -61,8 +61,16 @@ export class SocketHandlers{
         // TODO: test
         const socket = this as unknown as SCSocket;
         const roomID = socket.data.uID;
-        await this.actions.connectVirtualDisks(socket.data.uID, vdIDs);
+        await this.actions.setOnlineVirtualDisks(socket.data.uID, socket.id, socket.data.fingerprint, vdIDs);
         socket.broadcast.to(roomID).emit("provide-virtual-disks", socket.id, socket.data.fingerprint, vdIDs);
+    }
+
+    async revokeVirtualDisk(vdID: string){
+        // TODO: test
+        const socket = this as unknown as SCSocket;
+        const roomID = socket.data.uID;
+        await this.actions.setOfflineVirtualDisk(socket.data.uID, vdID);
+        socket.broadcast.to(roomID).emit("revoke-virtual-disk", socket.data.fingerprint, vdID);
     }
 
     async createVirtualDisk(callback){

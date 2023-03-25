@@ -4,6 +4,7 @@ export interface IVirtualDisksDBController{
     getVirtualDisks(uID: string): Promise<VirtualDiskData[]>,
     addVirtualDisk(uID: string, vd: VirtualDiskData): Promise<void>,
     removeVirtualDisk(uID: string, vdID: string): Promise<void>,
-    connectVirtualDisks(uID: string, vdIDs: string[]): Promise<void>,
+    setOnlineVirtualDisks(uID: string, socketID: string, fingerprint: string, vdIDs: string[]): Promise<void>,
+    setOfflineVirtualDisk(uID: string, vdID: string): Promise<void>,
     disconnectDevice(uID: string, fingerprint: string): Promise<void>,
 }
