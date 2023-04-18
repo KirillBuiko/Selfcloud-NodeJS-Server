@@ -17,17 +17,25 @@ export default function getSocket(dbController: IDBController){
     io.use(handshakeMiddle);
     io.on('connection', (socket: SCSocket) => {
         handlers.onConnect(socket);
-        socket.on("disconnect", handlers.onDisconnect)
+        socket.on("disconnect", () => handlers.onDisconnect(socket))
 
-        socket.on("get-virtual-disks", handlers.getVirtualDisks);
-        socket.on("provide-virtual-disks", handlers.provideVirtualDisks);
-        socket.on("revoke-virtual-disk", handlers.revokeVirtualDisk);
-        socket.on("create-virtual-disk", handlers.createVirtualDisk);
-        socket.on("remove-virtual-disk", handlers.removeVirtualDisk);
+        socket.on("get-virtual-disks", (...args) =>
+            handlers.getVirtualDisks(socket, ...args));
+        socket.on("provide-virtual-disks", (...args) =>
+            handlers.provideVirtualDisks(socket, ...args));
+        socket.on("revoke-virtual-disk", (...args) =>
+            handlers.revokeVirtualDisk(socket, ...args));
+        socket.on("create-virtual-disk", (...args) =>
+            handlers.createVirtualDisk(socket, ...args));
+        socket.on("remove-virtual-disk", (...args) =>
+            handlers.removeVirtualDisk(socket, ...args));
 
-        socket.on("connect-webrtc", handlers.connectWebRTC);
-        socket.on("connect-webrtc-answer", handlers.connectWebRTCAnswer);
-        socket.on("send-webrtc-candidate", handlers.sendWebRTCCandidate);
+        socket.on("connect-webrtc",(...args) =>
+            handlers.connectWebRTC(socket, ...args));
+        socket.on("connect-webrtc-answer", (...args) =>
+            handlers.connectWebRTCAnswer(socket, ...args));
+        socket.on("send-webrtc-candidate", (...args) =>
+            handlers.sendWebRTCCandidate(socket, ...args));
     });
 
     return socket_http;
