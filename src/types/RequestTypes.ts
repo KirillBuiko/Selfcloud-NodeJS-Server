@@ -36,6 +36,5 @@ export interface RegData{
 export interface VirtualDiskData{
     vdID: string,
     fingerprint: string,
-    isOnline: boolean,
-    socketID: string
+    isOnline: boolean
 }

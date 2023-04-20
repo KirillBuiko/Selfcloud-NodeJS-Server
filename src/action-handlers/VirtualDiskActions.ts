@@ -5,13 +5,12 @@ import * as crypto from "crypto";
 export class VirtualDiskActions{
     constructor(private dbController: IDBController) {}
 
-    async createVirtualDisk(uID: string, fingerprint: string, socketID: string): Promise<VirtualDiskData>{
+    async createVirtualDisk(uID: string, fingerprint: string): Promise<VirtualDiskData>{
         const vdID = crypto.randomUUID();
         const vd: VirtualDiskData = {
             vdID,
             fingerprint,
-            isOnline: false,
-            socketID: socketID
+            isOnline: false
         }
         await this.dbController.virtualDisks.addVirtualDisk(uID, vd)
         return vd;

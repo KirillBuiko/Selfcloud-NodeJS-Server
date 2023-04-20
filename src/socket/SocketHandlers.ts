@@ -94,7 +94,7 @@ export class SocketHandlers {
     async createVirtualDisk(socket: SCSocket, callback){
         // TODO: test
         const roomID = socket.data.uID;
-        const vd = await this.actions.createVirtualDisk(socket.data.uID, socket.data.fingerprint, socket.id);
+        const vd = await this.actions.createVirtualDisk(socket.data.uID, socket.data.fingerprint);
         socket.broadcast.to(roomID).emit("create-virtual-disk", vd);
         callback(vd);
     }
