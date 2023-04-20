@@ -2,18 +2,41 @@ import {SCSocket, SCSocketServer} from "@/types/SocketTypes";
 import {IDBController} from "@/action-handlers/interfaces/IDBController";
 import {VirtualDiskActions} from "@/action-handlers/VirtualDiskActions";
 
-export class SocketHandlers{
+export class SocketHandlers {
     private actions: VirtualDiskActions;
 
     constructor(private io: SCSocketServer, private dbController: IDBController){
         this.actions = new VirtualDiskActions(dbController);
     };
 
+    initSocketListeners(socket: SCSocket) {
+        this.onConnect(socket);
+        socket.on("disconnect", () => this.onDisconnect(socket))
+
+        socket.on("get-virtual-disks", (...args) =>
+            this.getVirtualDisks(socket, ...args));
+        socket.on("provide-virtual-disks", (...args) =>
+            this.provideVirtualDisks(socket, ...args));
+        socket.on("revoke-virtual-disk", (...args) =>
+            this.revokeVirtualDisk(socket, ...args));
+        socket.on("create-virtual-disk", (...args) =>
+            this.createVirtualDisk(socket, ...args));
+        socket.on("remove-virtual-disk", (...args) =>
+            this.removeVirtualDisk(socket, ...args));
+
+        socket.on("connect-webrtc",(...args) =>
+            this.connectWebRTC(socket, ...args));
+        socket.on("connect-webrtc-answer", (...args) =>
+            this.connectWebRTCAnswer(socket, ...args));
+        socket.on("send-webrtc-candidate", (...args) =>
+            this.sendWebRTCCandidate(socket, ...args));
+    }
+
     onConnect(socket: SCSocket){
         // TODO: test
         const roomID = socket.data.uID;
         socket.join(roomID);
-        socket.broadcast.to(roomID).emit("device-connected", socket.id, socket.data.fingerprint);
+        socket.broadcast.to(roomID).emit("device-connected", socket.data.fingerprint);
     }
 
     async onDisconnect(socket: SCSocket){
@@ -23,26 +46,29 @@ export class SocketHandlers{
         socket.broadcast.to(roomID).emit("device-disconnected", socket.data.fingerprint);
     }
 
-    connectWebRTC(socket: SCSocket, targetID: string, fingerprint: string, offer: string){
+    async connectWebRTC(socket: SCSocket, fingerprint: string, offer: string){
         // TODO: test
         const roomID = socket.data.uID;
-        if(this.io.sockets.adapter.rooms.get(roomID).has(targetID)){
-            this.io.sockets.sockets.get(targetID).emit("webrtc-offer-received", socket.id, fingerprint, offer);
+        const targetID = await this.getSocketIDByFingerprint(fingerprint, roomID);
+        if (targetID) {
+            this.io.sockets.sockets.get(targetID).emit("webrtc-offer-received", fingerprint, offer);
         }
     }
 
-    connectWebRTCAnswer(socket: SCSocket, targetID: string, fingerprint: string, answer: string){
+    async connectWebRTCAnswer(socket: SCSocket, fingerprint: string, answer: string){
         // TODO: test
         const roomID = socket.data.uID;
-        if(this.io.sockets.adapter.rooms.get(roomID).has(targetID)){
-            this.io.sockets.sockets.get(targetID).emit("webrtc-answer-received", socket.id, fingerprint, answer);
+        const targetID = await this.getSocketIDByFingerprint(fingerprint, roomID);
+        if (targetID) {
+            this.io.sockets.sockets.get(targetID).emit("webrtc-answer-received", fingerprint, answer);
         }
     }
 
-    sendWebRTCCandidate(socket: SCSocket, targetID: string, fingerprint: string, candidate: string){
+    async sendWebRTCCandidate(socket: SCSocket, fingerprint: string, candidate: string){
         const roomID = socket.data.uID;
-        if(this.io.sockets.adapter.rooms.get(roomID).has(targetID)){
-            this.io.sockets.sockets.get(targetID).emit("webrtc-candidate-received", socket.id, fingerprint, candidate);
+        const targetID = await this.getSocketIDByFingerprint(fingerprint, roomID);
+        if(targetID){
+            this.io.sockets.sockets.get(targetID).emit("webrtc-candidate-received", fingerprint, candidate);
         }
     }
 
@@ -54,8 +80,8 @@ export class SocketHandlers{
     async provideVirtualDisks(socket: SCSocket, vdIDs: string[]){
         // TODO: test
         const roomID = socket.data.uID;
-        await this.actions.setOnlineVirtualDisks(socket.data.uID, socket.id, socket.data.fingerprint, vdIDs);
-        socket.broadcast.to(roomID).emit("provide-virtual-disks", socket.id, socket.data.fingerprint, vdIDs);
+        await this.actions.setOnlineVirtualDisks(socket.data.uID, socket.data.fingerprint, vdIDs);
+        socket.broadcast.to(roomID).emit("provide-virtual-disks", socket.data.fingerprint, vdIDs);
     }
 
     async revokeVirtualDisk(socket: SCSocket, vdID: string){
@@ -78,5 +104,14 @@ export class SocketHandlers{
         const roomID = socket.data.uID;
         await this.actions.removeVirtualDisk(socket.data.uID, vdID);
         socket.broadcast.to(roomID).emit("remove-virtual-disk", vdID);
+    }
+
+    async getSocketIDByFingerprint(fingerprint: string, roomID: string): Promise<string> | undefined{
+        const sockets = await this.io.in(roomID).fetchSockets();
+        for(const socket of sockets){
+            if(socket.data.fingerprint === fingerprint)
+                return socket.id;
+        }
+        return undefined;
     }
 }

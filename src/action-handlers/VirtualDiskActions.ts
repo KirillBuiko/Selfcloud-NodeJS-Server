@@ -26,8 +26,8 @@ export class VirtualDiskActions{
         await this.dbController.virtualDisks.disconnectDevice(uID, fingerprint);
     }
 
-    async setOnlineVirtualDisks(uID: string, socketID: string, fingerprint: string, vdIDs: string[]): Promise<void>{
-        await this.dbController.virtualDisks.setOnlineVirtualDisks(uID, socketID, fingerprint, vdIDs);
+    async setOnlineVirtualDisks(uID: string, fingerprint: string, vdIDs: string[]): Promise<void>{
+        await this.dbController.virtualDisks.setOnlineVirtualDisks(uID, fingerprint, vdIDs);
     }
 
     async setOfflineVirtualDisk(uID: string, vdID: string): Promise<void>{

@@ -12,7 +12,7 @@ export class TestVirtualDisksDBController implements IVirtualDisksDBController{
     async removeVirtualDisk(uID: string, vdID: string): Promise<void> {
     }
 
-    async setOnlineVirtualDisks(uID: string, socketID: string, fingerprint: string, vdIDs: string[]): Promise<void> {
+    async setOnlineVirtualDisks(uID: string, fingerprint: string, vdIDs: string[]): Promise<void> {
     }
 
     async setOfflineVirtualDisk(uID: string, vdID: string): Promise<void> {
