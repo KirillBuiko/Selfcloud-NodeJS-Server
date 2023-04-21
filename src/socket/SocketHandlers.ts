@@ -28,8 +28,10 @@ export class SocketHandlers {
             this.connectWebRTC(socket, ...args));
         socket.on("connect-webrtc-answer", (...args) =>
             this.connectWebRTCAnswer(socket, ...args));
-        socket.on("send-webrtc-candidate", (...args) =>
-            this.sendWebRTCCandidate(socket, ...args));
+        socket.on("to-local-ice-candidate-ready", (...args) =>
+            this.toLocalIceCandidateReady(socket, ...args));
+        socket.on("to-remote-ice-candidate-ready", (...args) =>
+            this.toRemoteIceCandidateReady(socket, ...args));
     }
 
     onConnect(socket: SCSocket){
@@ -51,7 +53,7 @@ export class SocketHandlers {
         const roomID = socket.data.uID;
         const targetID = await this.getSocketIDByFingerprint(fingerprint, roomID);
         if (targetID) {
-            this.io.sockets.sockets.get(targetID).emit("webrtc-offer-received", fingerprint, offer);
+            this.io.sockets.sockets.get(targetID).emit("webrtc-offer-received", socket.data.fingerprint, offer);
         }
     }
 
@@ -60,16 +62,22 @@ export class SocketHandlers {
         const roomID = socket.data.uID;
         const targetID = await this.getSocketIDByFingerprint(fingerprint, roomID);
         if (targetID) {
-            this.io.sockets.sockets.get(targetID).emit("webrtc-answer-received", fingerprint, answer);
+            this.io.sockets.sockets.get(targetID).emit("webrtc-answer-received", socket.data.fingerprint, answer);
         }
     }
 
-    async sendWebRTCCandidate(socket: SCSocket, fingerprint: string, candidate: string){
+    async toLocalIceCandidateReady(socket: SCSocket, fingerprint: string, candidate: string){
         const roomID = socket.data.uID;
         const targetID = await this.getSocketIDByFingerprint(fingerprint, roomID);
-        if(targetID){
-            this.io.sockets.sockets.get(targetID).emit("webrtc-candidate-received", fingerprint, candidate);
-        }
+        if(targetID)
+            this.io.sockets.sockets.get(targetID).emit("to-local-ice-candidate-received", socket.data.fingerprint, candidate);
+    }
+
+    async toRemoteIceCandidateReady(socket: SCSocket, fingerprint: string, candidate: string){
+        const roomID = socket.data.uID;
+        const targetID = await this.getSocketIDByFingerprint(fingerprint, roomID);
+        if(targetID)
+            this.io.sockets.sockets.get(targetID).emit("to-remote-ice-candidate-received", socket.data.fingerprint, candidate);
     }
 
     async getVirtualDisks(socket: SCSocket, callback){

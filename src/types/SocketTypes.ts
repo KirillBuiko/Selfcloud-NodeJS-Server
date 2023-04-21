@@ -7,7 +7,8 @@ export interface ListenEvents{
     "revoke-virtual-disk": (vdID: string) => void,
     "create-virtual-disk": (callback: (vd: VirtualDiskData) => void) => void,
     "remove-virtual-disk": (vdID: string) => void,
-    "send-webrtc-candidate": (fingerprint: string, candidate: string) => void,
+    "to-local-ice-candidate-ready": (fingerprint: string, candidate: string) => void,
+    "to-remote-ice-candidate-ready": (fingerprint: string, candidate: string) => void
     "connect-webrtc": (fingerprint: string, offer: string) => void,
     "connect-webrtc-answer": (fingerprint: string, answer: string) => void
 }
@@ -21,7 +22,8 @@ interface EmitEvents{
     "remove-virtual-disk": (vdID: string) => void,
     "webrtc-offer-received": (fingerprint: string, offer: string) => void,
     "webrtc-answer-received": (fingerprint: string, answer: string) => void,
-    "webrtc-candidate-received": (fingerprint: string, candidate: string) => void
+    "to-local-ice-candidate-received": (fingerprint: string, candidate: string) => void,
+    "to-remote-ice-candidate-received": (fingerprint: string, candidate: string) => void
 }
 
 interface ServerEvents{
