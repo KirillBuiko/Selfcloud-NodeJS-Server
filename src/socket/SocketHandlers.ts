@@ -52,7 +52,7 @@ export class SocketHandlers {
         // TODO: test
         const roomID = socket.data.uID;
         const targetID = await this.getSocketIDByFingerprint(fingerprint, roomID);
-        if (targetID) {
+        if (targetID != undefined) {
             this.io.sockets.sockets.get(targetID).emit("webrtc-offer-received", socket.data.fingerprint, offer);
         }
     }
@@ -61,7 +61,7 @@ export class SocketHandlers {
         // TODO: test
         const roomID = socket.data.uID;
         const targetID = await this.getSocketIDByFingerprint(fingerprint, roomID);
-        if (targetID) {
+        if (targetID != undefined) {
             this.io.sockets.sockets.get(targetID).emit("webrtc-answer-received", socket.data.fingerprint, answer);
         }
     }
@@ -69,14 +69,14 @@ export class SocketHandlers {
     async toLocalIceCandidateReady(socket: SCSocket, fingerprint: string, candidate: string){
         const roomID = socket.data.uID;
         const targetID = await this.getSocketIDByFingerprint(fingerprint, roomID);
-        if(targetID)
+        if(targetID != undefined)
             this.io.sockets.sockets.get(targetID).emit("to-local-ice-candidate-received", socket.data.fingerprint, candidate);
     }
 
     async toRemoteIceCandidateReady(socket: SCSocket, fingerprint: string, candidate: string){
         const roomID = socket.data.uID;
         const targetID = await this.getSocketIDByFingerprint(fingerprint, roomID);
-        if(targetID)
+        if(targetID != undefined)
             this.io.sockets.sockets.get(targetID).emit("to-remote-ice-candidate-received", socket.data.fingerprint, candidate);
     }
 
@@ -114,7 +114,7 @@ export class SocketHandlers {
         socket.broadcast.to(roomID).emit("remove-virtual-disk", vdID);
     }
 
-    async getSocketIDByFingerprint(fingerprint: string, roomID: string): Promise<string> | undefined{
+    async getSocketIDByFingerprint(fingerprint: string, roomID: string): Promise<string | undefined> {
         const sockets = await this.io.in(roomID).fetchSockets();
         for(const socket of sockets){
             if(socket.data.fingerprint === fingerprint)

@@ -1,8 +1,8 @@
 import express from '@/express';
 import socket from '@/socket';
-import {testDBController} from '@/db-controller/test';
 import {Configs} from '@/ConfigFile';
 import {AppDataSource} from '@/typeorm';
+import {prodDBController} from "@/db-controller/prod";
 
 async function assertDatabaseConnectionOk() {
     console.log(`Checking database connection...`);
@@ -20,10 +20,10 @@ async function assertDatabaseConnectionOk() {
     await assertDatabaseConnectionOk();
     console.log(`Starting Sequelize + Express on port ${Configs.EXPRESS_PORT}...`);
 
-    express(testDBController).listen(Configs.EXPRESS_PORT, () => {
+    express(prodDBController).listen(Configs.EXPRESS_PORT, () => {
         console.log(`Express server started on ${Configs.HOST}:${Configs.EXPRESS_PORT}.`);
     });
-    socket(testDBController).listen(Configs.SOCKET_PORT, () => {
+    socket(prodDBController).listen(Configs.SOCKET_PORT, () => {
         console.log(`Socket server started on ${Configs.HOST}:${Configs.SOCKET_PORT}.`);
     });
 })()

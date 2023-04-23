@@ -1,19 +1,11 @@
 import {IDBController} from "@/action-handlers/interfaces/IDBController";
 import {VirtualDiskData} from "@/types/RequestTypes";
-import * as crypto from "crypto";
 
 export class VirtualDiskActions{
     constructor(private dbController: IDBController) {}
 
     async createVirtualDisk(uID: string, fingerprint: string): Promise<VirtualDiskData>{
-        const vdID = crypto.randomUUID();
-        const vd: VirtualDiskData = {
-            vdID,
-            fingerprint,
-            isOnline: false
-        }
-        await this.dbController.virtualDisks.addVirtualDisk(uID, vd)
-        return vd;
+        return await this.dbController.virtualDisks.addVirtualDisk(uID, fingerprint);
     }
 
     async removeVirtualDisk(uID: string, vdID: string): Promise<void>{

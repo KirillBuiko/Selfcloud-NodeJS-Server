@@ -6,7 +6,8 @@ export class TestVirtualDisksDBController implements IVirtualDisksDBController{
         return [];
     }
 
-    async addVirtualDisk(uID: string, vd: VirtualDiskData): Promise<void>{
+    addVirtualDisk(uID: string, fingerprint: string): Promise<VirtualDiskData> {
+        return Promise.resolve(undefined);
     }
 
     async removeVirtualDisk(uID: string, vdID: string): Promise<void> {

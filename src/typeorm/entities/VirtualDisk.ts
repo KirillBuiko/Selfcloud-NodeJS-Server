@@ -1,9 +1,12 @@
-import {Column, Entity, PrimaryColumn} from "typeorm"
+import {Column, Entity, PrimaryGeneratedColumn} from "typeorm"
 
 @Entity()
 export class VirtualDisk {
-    @PrimaryColumn()
+    @PrimaryGeneratedColumn()
     vd_id: string
+
+    @Column()
+    u_id: string
 
     @Column()
     fingerprint: string
@@ -11,5 +14,5 @@ export class VirtualDisk {
     @Column({
         default: false
     })
-    isOnline: string
+    isOnline: boolean
 }
