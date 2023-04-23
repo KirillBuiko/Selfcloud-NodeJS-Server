@@ -5,20 +5,21 @@ import {Configs} from "@/ConfigFile";
 import {IDBController} from "@/action-handlers/interfaces/IDBController";
 
 export class TokenActions {
-    constructor(private dbController: IDBController) {}
+    constructor(private dbController: IDBController) {
+    }
 
-    async checkToken(token: AccessData | RefreshData): Promise<ResponseObject<string>>{
+    async checkToken(token: AccessData | RefreshData): Promise<ResponseObject<string>> {
         const info = await this.dbController.token.getTokenInfo(token)
-        if(info == null)
+        if (info == null)
             return {code: ResultCode.TOKEN_INVALID};
         if (info.deadTime < (new Date()).getTime())
             return {code: ResultCode.TOKEN_EXPIRED, result: info.uID};
         return {code: ResultCode.OK, result: info.uID};
     }
 
-    async createToken(uID: string, fingerprint?: string): Promise<RefreshData>{
+    async createToken(uID: string, fingerprint?: string): Promise<RefreshData> {
         const token: RefreshData = {
-            fingerprint: (fingerprint || this.createFingerprint()),
+            fingerprint: (fingerprint ?? this.createFingerprint()),
             access: this.createAccessToken(),
             refresh: this.createRefreshToken(),
         };
@@ -27,28 +28,27 @@ export class TokenActions {
         return token;
     }
 
-    createAccessToken(): string{
+    createAccessToken(): string {
         return crypto.randomBytes(Configs.ACCESS_TOKEN_LENGTH).toString("base64");
     }
 
-    createRefreshToken(){
+    createRefreshToken() {
         return crypto.randomBytes(Configs.REFRESH_TOKEN_LENGTH).toString("base64");
     }
 
-    createFingerprint(){
+    createFingerprint() {
         return crypto.randomBytes(Configs.FINGERPRINT_LENGTH).toString("base64");
     }
 
-    async refreshToken(token: RefreshData): Promise<ResponseObject<RefreshData>>{
+    async refreshToken(token: RefreshData): Promise<ResponseObject<RefreshData>> {
         const res = await this.checkToken(token);
-        if(res.code == ResultCode.OK || res.code == ResultCode.TOKEN_EXPIRED){
+        if (res.code == ResultCode.OK || res.code == ResultCode.TOKEN_EXPIRED) {
             const newToken = await this.createToken(res.result, token.fingerprint);
             return {code: ResultCode.OK, result: newToken};
-        }
-        else return {code: res.code};
+        } else return {code: res.code};
     }
 
-    async clearToken(token: AccessData): Promise<void>{
+    async clearToken(token: AccessData): Promise<void> {
         await this.dbController.token.deleteToken(token);
     }
 }

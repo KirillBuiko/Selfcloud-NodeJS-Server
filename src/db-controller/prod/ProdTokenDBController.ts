@@ -4,16 +4,19 @@ import {AppDataSource} from "@/typeorm";
 import {Token} from "@/typeorm/entities/Token";
 import {Configs} from "@/ConfigFile";
 
-export class ProdTokenDBController implements ITokenDBController{
+export class ProdTokenDBController implements ITokenDBController {
     private tokenRepo = AppDataSource.getRepository(Token);
 
-    constructor() {}
+    constructor() {
+    }
 
     async deleteToken(token: AccessData): Promise<void> {
+        if (!token.access) return;
         await this.tokenRepo.delete({access: token.access});
     }
 
     async getTokenInfo(token: AccessData | RefreshData): Promise<TokenInfo | null> {
+        if (!token.access) return null;
         const tokenInfo = await this.tokenRepo.findOneBy({access: token.access});
         console.log("TOKEN LOG,", token, tokenInfo);
         return tokenInfo != null ? {
@@ -23,12 +26,12 @@ export class ProdTokenDBController implements ITokenDBController{
     }
 
     async saveToken(uID: string, token: RefreshData): Promise<void> {
-        console.error("SAVE: ////////////////////////", (await this.tokenRepo.save({
+        await this.tokenRepo.save({
             u_id: uID,
             deadAt: (new Date()).getTime() + Configs.ACCESS_TOKEN_LIFETIME,
             refresh: token.refresh,
             access: token.access,
             fingerprint: token.fingerprint
-        })).deadAt)
+        });
     }
 }
