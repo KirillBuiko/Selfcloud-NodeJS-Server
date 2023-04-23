@@ -32,7 +32,7 @@ export function routerAccountRequest(dbController: IDBController): Router{
     accReqRouter.post(Configs.REQUEST_PREFIX + Configs.REFRESH_PATH, [
         exAccReqHandlers.refreshToken.bind(exAccReqHandlers)])
 
-    accReqRouter.post(Configs.REQUEST_PREFIX + '/logout',
+    accReqRouter.get(Configs.REQUEST_PREFIX + '/logout',
         exAccReqHandlers.logout.bind(exAccReqHandlers))
 
     return accReqRouter;

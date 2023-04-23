@@ -51,7 +51,7 @@ export class ExpressAccountRequestHandlers {
     }
 
     private async expressHandlerWrapper<T, R>(req: Request, res: Response, fn: (object: R) => Promise<ResponseObject<T>>,
-                                              hasNext: boolean = false,
+                                              hasNext = false,
                                               presendCallback?: (result: T) => any) {
         const response = await fn(req.body);
         console.log(response);

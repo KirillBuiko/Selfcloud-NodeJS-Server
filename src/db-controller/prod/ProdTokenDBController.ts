@@ -2,6 +2,7 @@ import {ITokenDBController} from "@/action-handlers/interfaces/ITokenDBControlle
 import {AccessData, RefreshData, TokenInfo} from "@/types/RequestTypes";
 import {AppDataSource} from "@/typeorm";
 import {Token} from "@/typeorm/entities/Token";
+import {Configs} from "@/ConfigFile";
 
 export class ProdTokenDBController implements ITokenDBController{
     private tokenRepo = AppDataSource.getRepository(Token);
@@ -21,9 +22,12 @@ export class ProdTokenDBController implements ITokenDBController{
     }
 
     async saveToken(uID: string, token: RefreshData): Promise<void> {
-        await this.tokenRepo.save({
+        console.error("SAVE: ////////////////////////", (await this.tokenRepo.save({
             u_id: uID,
-            ...token
-        })
+            deadAt: (new Date()).getTime() + Configs.ACCESS_TOKEN_LIFETIME,
+            refresh: token.refresh,
+            access: token.access,
+            fingerprint: token.fingerprint
+        })).deadAt)
     }
 }

@@ -1,5 +1,4 @@
 import {Column, Entity, PrimaryColumn} from "typeorm"
-import {Configs} from "@/ConfigFile";
 
 @Entity()
 export class Token {
@@ -15,9 +14,6 @@ export class Token {
     @Column()
     refresh: string
 
-    @Column({
-        type: "bigint",
-        default: (new Date()).getTime() + Configs.ACCESS_TOKEN_LIFETIME
-    })
+    @Column()
     deadAt: number
 }
