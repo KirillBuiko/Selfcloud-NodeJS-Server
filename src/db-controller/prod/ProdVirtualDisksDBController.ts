@@ -17,7 +17,7 @@ export class ProdVirtualDisksDBController implements IVirtualDisksDBController{
     }
 
     async addVirtualDisk(uID: string, fingerprint: string): Promise<VirtualDiskData>{
-        const vd = await this.virtualDiskRepo.save({fingerprint});
+        const vd = await this.virtualDiskRepo.save({u_id: uID, fingerprint});
         return {
             fingerprint: vd.fingerprint,
             isOnline: vd.isOnline,

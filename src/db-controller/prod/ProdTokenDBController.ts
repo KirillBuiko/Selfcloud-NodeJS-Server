@@ -15,6 +15,7 @@ export class ProdTokenDBController implements ITokenDBController{
 
     async getTokenInfo(token: AccessData | RefreshData): Promise<TokenInfo | null> {
         const tokenInfo = await this.tokenRepo.findOneBy({access: token.access});
+        console.log("TOKEN LOG,", token, tokenInfo);
         return tokenInfo != null ? {
             uID: tokenInfo.u_id,
             deadTime: tokenInfo.deadAt
