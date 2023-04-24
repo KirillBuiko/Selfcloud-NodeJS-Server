@@ -1,6 +1,6 @@
 import express from '@/express';
 import socket from '@/socket';
-import {Configs} from '@/ConfigFile';
+import {Configs} from '@/Configs';
 import {AppDataSource} from '@/typeorm';
 import {prodDBController} from "@/db-controller/prod";
 

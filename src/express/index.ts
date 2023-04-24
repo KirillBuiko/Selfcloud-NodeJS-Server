@@ -3,7 +3,7 @@ import cookieParser from 'cookie-parser'
 import cors from 'cors';
 import {cookieMigrationMiddle} from "@/express/middlewares/cookieMigrationMiddle"
 import {routerAccountRequest} from "@/express/routers/routerAccountRequest";
-import {Configs} from "@/ConfigFile";
+import {Configs} from "@/Configs";
 import {IDBController} from "@/action-handlers/interfaces/IDBController";
 
 export default function getExpress(dbController: IDBController){

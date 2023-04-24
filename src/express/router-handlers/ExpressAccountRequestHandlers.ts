@@ -4,7 +4,7 @@ import ResultCode from "@/ResultCode";
 import {AccountActions} from "@/action-handlers/AccountActions"
 import {CookieTokenHandler} from "@/express/router-handlers/CookieTokenHandler";
 import {IDBController} from "@/action-handlers/interfaces/IDBController";
-import {Configs} from "@/ConfigFile";
+import {Configs} from "@/Configs";
 
 export class ExpressAccountRequestHandlers {
     private readonly accountActionHandlers: AccountActions;
@@ -39,22 +39,21 @@ export class ExpressAccountRequestHandlers {
 
     async accessTokenCheckNext(req: Request, res: Response, next: NextFunction) {
         const response = await this.accountActionHandlers.accessTokenCheck(req.body);
-        this.expressRequestResultHandler(response, res, next);
+        this.expressRequestResultHandler(response, res, null, next);
     }
 
     async refreshToken(req: Request, res: Response) {
         const response = await this.accountActionHandlers.refreshToken(req.body);
-        this.expressRequestResultHandler(response, res);
+        this.expressRequestResultHandler(response, res, (result) => {
+            this.cookieTokenHandler.setTokens(result, res);
+        });
     }
 
     async loginPassword(req: Request, res: Response) {
         const response = await this.accountActionHandlers.loginPassword(req.body);
-        if (response.code != ResultCode.OK) {
-            res.json({code: response.code});
-            return;
-        }
-        this.cookieTokenHandler.setTokens(response.result, res);
-        res.json(response);
+        this.expressRequestResultHandler(response, res, (result) => {
+            this.cookieTokenHandler.setTokens(result, res);
+        });
     }
 
     async registration(req: Request, res: Response) {
@@ -64,15 +63,19 @@ export class ExpressAccountRequestHandlers {
 
     async logout(req: Request, res: Response) {
         const response = await this.accountActionHandlers.logout(req.body);
-        await this.expressRequestResultHandler(response, res);
+        this.expressRequestResultHandler(response, res, () => {
+            this.cookieTokenHandler.clearTokenCookies(res);
+        });
     }
 
-    private expressRequestResultHandler<T, R>(response: ResponseObject<T>, res: Response, next?: NextFunction) {
-        console.log(response);
+    private expressRequestResultHandler<T, R>(response: ResponseObject<T>, res: Response,
+                                              preSendCallback?: (result: T) => void, next?: NextFunction) {
         if (response.code != ResultCode.OK) {
             res.json({code: response.code});
             return;
         }
-        next ? next() : res.json(response)
+        if (preSendCallback)
+            preSendCallback(response.result);
+        next ? next() : res.json(response);
     }
 }

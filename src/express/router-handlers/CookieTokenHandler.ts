@@ -1,5 +1,5 @@
 import {CookieOptions, Response} from "express";
-import {Configs} from "@/ConfigFile";
+import {Configs} from "@/Configs";
 import {RefreshData} from "@/types/RequestTypes";
 
 export class CookieTokenHandler {

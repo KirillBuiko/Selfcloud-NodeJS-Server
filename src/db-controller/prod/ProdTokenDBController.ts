@@ -2,7 +2,8 @@ import {ITokenDBController} from "@/action-handlers/interfaces/ITokenDBControlle
 import {AccessData, RefreshData, TokenInfo} from "@/types/RequestTypes";
 import {AppDataSource} from "@/typeorm";
 import {Token} from "@/typeorm/entities/Token";
-import {Configs} from "@/ConfigFile";
+import {Configs} from "@/Configs";
+import {Equal} from "typeorm";
 
 export class ProdTokenDBController implements ITokenDBController {
     private tokenRepo = AppDataSource.getRepository(Token);
@@ -11,14 +12,11 @@ export class ProdTokenDBController implements ITokenDBController {
     }
 
     async deleteToken(token: AccessData): Promise<void> {
-        if (!token.access) return;
-        await this.tokenRepo.delete({access: token.access});
+        await this.tokenRepo.delete({access: Equal(token.access)});
     }
 
     async getTokenInfo(token: AccessData | RefreshData): Promise<TokenInfo | null> {
-        if (!token.access) return null;
-        const tokenInfo = await this.tokenRepo.findOneBy({access: token.access});
-        console.log("TOKEN LOG,", token, tokenInfo);
+        const tokenInfo = await this.tokenRepo.findOneBy({access: Equal(token.access)});
         return tokenInfo != null ? {
             uID: tokenInfo.u_id,
             deadTime: tokenInfo.deadAt

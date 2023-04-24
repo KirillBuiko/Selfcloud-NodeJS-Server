@@ -1,7 +1,7 @@
 import {AccessData, RefreshData, ResponseObject} from "@/types/RequestTypes";
 import ResultCode from "@/ResultCode";
 import crypto from "crypto";
-import {Configs} from "@/ConfigFile";
+import {Configs} from "@/Configs";
 import {IDBController} from "@/action-handlers/interfaces/IDBController";
 
 export class TokenActions {
@@ -9,7 +9,9 @@ export class TokenActions {
     }
 
     async checkToken(token: AccessData | RefreshData): Promise<ResponseObject<string>> {
+        console.log(token);
         const info = await this.dbController.token.getTokenInfo(token)
+        console.log(info);
         if (info == null)
             return {code: ResultCode.TOKEN_INVALID};
         if (info.deadTime < (new Date()).getTime())
