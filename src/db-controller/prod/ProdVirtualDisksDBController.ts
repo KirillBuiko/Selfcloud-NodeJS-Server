@@ -12,16 +12,18 @@ export class ProdVirtualDisksDBController implements IVirtualDisksDBController {
         return vds.map(vd => ({
             vdID: vd.vd_id,
             fingerprint: vd.fingerprint,
+            name: vd.name,
             isOnline: vd.isOnline
         }));
     }
 
-    async addVirtualDisk(uID: string, fingerprint: string): Promise<VirtualDiskData | null> {
+    async addVirtualDisk(uID: string, fingerprint: string, name: string): Promise<VirtualDiskData | null> {
         if (!uID || !fingerprint) return null;
-        const vd = await this.virtualDiskRepo.save({u_id: uID, fingerprint});
+        const vd = await this.virtualDiskRepo.save({u_id: uID, fingerprint, name});
         return {
             fingerprint: vd.fingerprint,
             isOnline: vd.isOnline,
+            name: vd.name,
             vdID: vd.vd_id
         }
     }

@@ -5,8 +5,8 @@ export class VirtualDiskActions {
     constructor(private dbController: IDBController) {
     }
 
-    async createVirtualDisk(uID: string, fingerprint: string): Promise<VirtualDiskData | null> {
-        return await this.dbController.virtualDisks.addVirtualDisk(uID, fingerprint);
+    async createVirtualDisk(uID: string, fingerprint: string, name: string): Promise<VirtualDiskData | null> {
+        return await this.dbController.virtualDisks.addVirtualDisk(uID, fingerprint, name);
     }
 
     async removeVirtualDisk(uID: string, vdID: string): Promise<void> {

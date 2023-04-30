@@ -5,10 +5,10 @@ export interface ListenEvents{
     "get-virtual-disks": (callback: (vds: VirtualDiskData[]) => void) => void,
     "provide-virtual-disks": (vdIDs: string[]) => void,
     "revoke-virtual-disk": (vdID: string) => void,
-    "create-virtual-disk": (callback: (vd: VirtualDiskData) => void) => void,
+    "create-virtual-disk": (name: string, callback: (vd: VirtualDiskData) => void) => void,
     "remove-virtual-disk": (vdID: string) => void,
-    "to-local-ice-candidate-ready": (fingerprint: string, candidate: string) => void,
-    "to-remote-ice-candidate-ready": (fingerprint: string, candidate: string) => void
+    "to-local-ice-candidate-ready": (fingerprint: string, candidate: RTCIceCandidate) => void,
+    "to-remote-ice-candidate-ready": (fingerprint: string, candidate: RTCIceCandidate) => void
     "connect-webrtc": (fingerprint: string, offer: string) => void,
     "connect-webrtc-answer": (fingerprint: string, answer: string) => void
 }
@@ -22,8 +22,8 @@ interface EmitEvents{
     "remove-virtual-disk": (vdID: string) => void,
     "webrtc-offer-received": (fingerprint: string, offer: string) => void,
     "webrtc-answer-received": (fingerprint: string, answer: string) => void,
-    "to-local-ice-candidate-received": (fingerprint: string, candidate: string) => void,
-    "to-remote-ice-candidate-received": (fingerprint: string, candidate: string) => void
+    "to-local-ice-candidate-received": (fingerprint: string, candidate: RTCIceCandidate) => void,
+    "to-remote-ice-candidate-received": (fingerprint: string, candidate: RTCIceCandidate) => void
 }
 
 interface ServerEvents{

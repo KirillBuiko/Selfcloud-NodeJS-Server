@@ -17,7 +17,12 @@ export class MiddlewareHandler{
     }
 
     async handshakeMiddle(socket: SCSocket, next){
-        if(!socket.request.headers.cookie) return;
+        if(!socket.request.headers.cookie) {
+            const err = new Error("NotAuthorized") as Error & {data: ResponseObject<string>};
+            err.data = {code: ResultCode.TOKEN_INVALID};
+            next(err);
+            return;
+        }
 
         const cookies = cookie.parse(socket.request.headers.cookie) as unknown as AccessData;
         console.log(cookies);

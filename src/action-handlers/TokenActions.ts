@@ -39,7 +39,7 @@ export class TokenActions {
     }
 
     createFingerprint() {
-        return crypto.randomBytes(Configs.FINGERPRINT_LENGTH).toString("base64");
+        return crypto.randomInt(10**(Configs.FINGERPRINT_LENGTH - 1), 10**Configs.FINGERPRINT_LENGTH).toString();
     }
 
     async refreshToken(token: RefreshData): Promise<ResponseObject<RefreshData>> {

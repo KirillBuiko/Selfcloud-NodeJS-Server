@@ -6,7 +6,7 @@ import {SocketHandlers} from "@/socket/SocketHandlers";
 import {IDBController} from "@/action-handlers/interfaces/IDBController";
 import {Configs} from "@/Configs";
 
-export default function getSocket(dbController: IDBController){
+export default function getSocket(dbController: IDBController) {
     const socket_http = http.createServer();
     const io: SCSocketServer = new Server(socket_http, {
         cors: {

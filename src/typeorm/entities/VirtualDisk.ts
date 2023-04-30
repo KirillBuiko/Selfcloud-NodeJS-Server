@@ -11,6 +11,9 @@ export class VirtualDisk {
     @Column()
     fingerprint: string
 
+    @Column()
+    name: string
+
     @Column({
         default: false
     })

@@ -11,7 +11,9 @@ export class SocketHandlers {
 
     initSocketListeners(socket: SCSocket) {
         this.onConnect(socket);
-        socket.on("disconnect", () => this.onDisconnect(socket))
+        socket.onAny((eventName, ...args) => this.logOnAny(socket, eventName, args));
+        socket.on("disconnect", () =>
+            this.onDisconnect(socket))
 
         socket.on("get-virtual-disks", (...args) =>
             this.getVirtualDisks(socket, ...args));
@@ -66,14 +68,14 @@ export class SocketHandlers {
         }
     }
 
-    async toLocalIceCandidateReady(socket: SCSocket, fingerprint: string, candidate: string) {
+    async toLocalIceCandidateReady(socket: SCSocket, fingerprint: string, candidate: RTCIceCandidate) {
         const roomID = socket.data.uID;
         const targetID = await this.getSocketIDByFingerprint(fingerprint, roomID);
         if (targetID != undefined)
             this.io.sockets.sockets.get(targetID).emit("to-local-ice-candidate-received", socket.data.fingerprint, candidate);
     }
 
-    async toRemoteIceCandidateReady(socket: SCSocket, fingerprint: string, candidate: string) {
+    async toRemoteIceCandidateReady(socket: SCSocket, fingerprint: string, candidate: RTCIceCandidate) {
         const roomID = socket.data.uID;
         const targetID = await this.getSocketIDByFingerprint(fingerprint, roomID);
         if (targetID != undefined)
@@ -99,10 +101,10 @@ export class SocketHandlers {
         socket.broadcast.to(roomID).emit("revoke-virtual-disk", socket.data.fingerprint, vdID);
     }
 
-    async createVirtualDisk(socket: SCSocket, callback) {
+    async createVirtualDisk(socket: SCSocket, name: string, callback) {
         // TODO: test
         const roomID = socket.data.uID;
-        const vd = await this.actions.createVirtualDisk(socket.data.uID, socket.data.fingerprint);
+        const vd = await this.actions.createVirtualDisk(socket.data.uID, socket.data.fingerprint, name);
         if (vd)
             socket.broadcast.to(roomID).emit("create-virtual-disk", vd);
         callback(vd);
@@ -122,5 +124,10 @@ export class SocketHandlers {
                 return socket.id;
         }
         return undefined;
+    }
+
+    logOnAny(socket: SCSocket, eventName, ...args) {
+        console.warn(`EVENT "${eventName}" emitted by ${socket.data.fingerprint} with args:`);
+        console.warn(args);
     }
 }
