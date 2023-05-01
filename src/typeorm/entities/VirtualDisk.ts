@@ -2,7 +2,7 @@ import {Column, Entity, PrimaryGeneratedColumn} from "typeorm"
 
 @Entity()
 export class VirtualDisk {
-    @PrimaryGeneratedColumn()
+    @PrimaryGeneratedColumn("uuid")
     vd_id: string
 
     @Column()
