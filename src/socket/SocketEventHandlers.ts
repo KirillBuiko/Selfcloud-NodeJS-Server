@@ -2,7 +2,7 @@ import {SCSocket, SCSocketServer} from "@/types/SocketTypes";
 import {IDBController} from "@/action-handlers/interfaces/IDBController";
 import {VirtualDiskActions} from "@/action-handlers/VirtualDiskActions";
 
-export class SocketHandlers {
+export class SocketEventHandlers {
     private actions: VirtualDiskActions;
 
     constructor(private io: SCSocketServer, private dbController: IDBController) {
